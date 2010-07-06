@@ -27,7 +27,8 @@ import org.jredis.ClientRuntimeException;
 import org.jredis.ProviderException;
 import org.jredis.Redis;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -40,6 +41,7 @@ import org.jredis.ri.alphazero.support.Log;
  */
 @Redis(versions={"*"})
 public class SocketConnection  {
+    private static Logger logger = LoggerFactory.getLogger(SocketConnection.class);
 	
 	// ------------------------------------------------------------------------
 	// Properties
@@ -120,7 +122,7 @@ public class SocketConnection  {
 		socketClose();
 		isConnected = false;
 
-//		Log.log("RedisConnection - disconnected");
+//		logger.info("RedisConnection - disconnected");
 	}
 	
 	/**
@@ -133,7 +135,7 @@ public class SocketConnection  {
 		initializeSocketStreams ();
 		isConnected = true;
 
-//		Log.log("RedisConnection - connected.");
+//		logger.info("RedisConnection - connected.");
 	}
 
 	/**
@@ -152,7 +154,7 @@ public class SocketConnection  {
 		
 		socket.connect(socketAddress);
 		
-//		Log.log("RedisConnection - socket connected to %s:%d", socketAddress.getHostName(), port);
+//		logger.info("RedisConnection - socket connected to %s:%d", socketAddress.getHostName(), port);
 	}
 
 	/**
@@ -163,10 +165,10 @@ public class SocketConnection  {
 			if(null != socket) socket.close();
 		}
 		catch (IOException e) {
-			Log.error("[IO] on closeSocketConnect" + e.getLocalizedMessage());
+			logger.error("[IO] on closeSocketConnect" + e.getLocalizedMessage());
 		}
 		catch (Exception e) {
-			Log.error ("on closeSocketConnect" + e.getLocalizedMessage());
+			logger.error ("on closeSocketConnect" + e.getLocalizedMessage());
 		}
 		finally {
 			socket = null;
@@ -178,9 +180,9 @@ public class SocketConnection  {
 			finally {
 				input_stream = null;
 				output_stream = null;
-//				Log.log("RedisConnection - i/o streams closed.");
+//				logger.info("RedisConnection - i/o streams closed.");
 			}
-//			Log.log("RedisConnection - socket closed");
+//			logger.info("RedisConnection - socket closed");
 		}
 	}
 	
@@ -192,7 +194,7 @@ public class SocketConnection  {
 		input_stream = Assert.notNull(socket.getInputStream(), "input_stream", ProviderException.class);
 		output_stream = Assert.notNull(socket.getOutputStream(), "output_stream", ProviderException.class);
 
-//		Log.log("RedisConnection - initialized i/o streams ");
+//		logger.info("RedisConnection - initialized i/o streams ");
 	}
 
 	/**

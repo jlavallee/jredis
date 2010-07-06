@@ -28,6 +28,7 @@ package org.jredis.ri.alphazero.support;
  * @since   alpha.0
  * 
  */
+@Deprecated
 public class Log {
 	public enum Category { INFO, ERROR, PROBLEM, BUG }
 	

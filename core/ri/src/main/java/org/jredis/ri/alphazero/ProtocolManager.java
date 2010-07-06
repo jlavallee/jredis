@@ -27,7 +27,8 @@ import org.jredis.ProviderException;
 import org.jredis.protocol.Protocol;
 import org.jredis.ri.alphazero.protocol.SynchProtocol;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.corba.se.pept.protocol.ProtocolHandler;
 
@@ -41,6 +42,7 @@ import com.sun.corba.se.pept.protocol.ProtocolHandler;
  * 
  */
 public class ProtocolManager implements ProtocolFactory {
+    private static Logger logger = LoggerFactory.getLogger(ProtocolManager.class);
 
 	/**  */
 	private static final ProtocolManager _instance = new ProtocolManager ();
@@ -116,7 +118,7 @@ public class ProtocolManager implements ProtocolFactory {
 			Assert.isTrue(handler.isCompatibleWithVersion(version.id), "supports version " + version.id, ProviderException.class);
 		}
 		catch (SecurityException e) {
-			Log.problem("SecurityException when attempting to instantiate a " + handlerClass.getCanonicalName());
+			logger.warn("SecurityException when attempting to instantiate a " + handlerClass.getCanonicalName());
 			throw new ClientRuntimeException ("Check the security policy -- we have a problem => "+ e.getLocalizedMessage(), e);
 		}
 		catch (Exception e) {
@@ -125,7 +127,7 @@ public class ProtocolManager implements ProtocolFactory {
 				handlerClass.getCanonicalName() + " to service protocal version " + 
 				version.id + "\n thrown => " + e.getLocalizedMessage(); 
 
-			Log.bug(bugMsg);
+			logger.error(bugMsg);  // was Log.bug
 			throw new ProviderException(bugMsg, e);
 		}
 

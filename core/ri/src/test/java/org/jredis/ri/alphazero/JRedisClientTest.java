@@ -20,7 +20,8 @@ import static org.testng.Assert.fail;
 import org.jredis.ClientRuntimeException;
 import org.jredis.JRedis;
 import org.jredis.connector.ConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -37,6 +38,8 @@ import org.testng.annotations.Test;
 
 @Test(sequential = true, suiteName="JRedisClient-tests")
 public class JRedisClientTest extends JRedisProviderTestsBase {
+    private static Logger logger = LoggerFactory.getLogger(JRedisClientTest.class);
+
 
 	// ------------------------------------------------------------------------
 	// TEST SETUP 
@@ -51,7 +54,7 @@ public class JRedisClientTest extends JRedisProviderTestsBase {
 			provider = new JRedisClient (this.host, this.port, this.password, this.db1);
         }
         catch (ClientRuntimeException e) {
-        	Log.error(e.getLocalizedMessage());
+        	logger.error(e.getLocalizedMessage());
         }
         return provider;
 	}
@@ -73,7 +76,7 @@ public class JRedisClientTest extends JRedisProviderTestsBase {
 	 */
 	@AfterTest
 	public void testQuit() {
-		Log.log("TEST: QUIT command");
+		logger.info("TEST: QUIT command");
 		try {
 			JRedis provider = getProviderInstance();
 			provider.quit ();

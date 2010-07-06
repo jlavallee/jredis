@@ -36,7 +36,8 @@ import org.jredis.ri.alphazero.protocol.ConcurrentSynchProtocol;
 import org.jredis.ri.alphazero.protocol.VirtualResponse;
 import org.jredis.ri.alphazero.support.Assert;
 import org.jredis.ri.alphazero.support.FastBufferedInputStream;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * [TODO: document me!]
@@ -48,6 +49,7 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public abstract class PipelineConnectionBase extends ConnectionBase {
+    private static Logger logger = LoggerFactory.getLogger(PipelineConnectionBase.class);
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -116,14 +118,14 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
     @Override
     protected void notifyConnected () {
     	super.notifyConnected();
-		Log.log("Pipeline <%s> connected", this);
+		logger.info("Pipeline <%s> connected", this);
     	isActive.set(true);
     	connectionEstablished.countDown();
     }
     @Override
     protected void notifyDisconnected () {
     	super.notifyDisconnected();
-		Log.log("Pipeline <%s> disconnected", this);
+		logger.info("Pipeline <%s> disconnected", this);
     	isActive.set(true);
     	connectionEstablished.countDown();
     }
@@ -219,7 +221,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
     	 */
 //        @Override
         public void run () {
-			Log.log("Pipeline thread <%s> started.", Thread.currentThread().getName());
+			logger.info("Pipeline thread <%s> started.", Thread.currentThread().getName());
         	PendingRequest pending = null;
         	while(true){
         		Response response = null;
@@ -231,22 +233,22 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 						pending.response = response;
 						pending.completion.signal();
 						if(response.getStatus().isError()) {
-							Log.error ("(Asynch) Error response for " + pending.cmd.code + " => " + response.getStatus().message());
+							logger.error ("(Asynch) Error response for " + pending.cmd.code + " => " + response.getStatus().message());
 						}
 
 					}
 					catch (ProviderException bug){
-						Log.error ("ProviderException: " + bug.getLocalizedMessage());
+						logger.error ("ProviderException: " + bug.getLocalizedMessage());
 						bug.printStackTrace();
 						pending.setCRE(bug);
 					}
 					catch (ClientRuntimeException cre) {
-						Log.error ("ClientRuntimeException: " + cre.getLocalizedMessage());
+						logger.error ("ClientRuntimeException: " + cre.getLocalizedMessage());
 						cre.printStackTrace();
 						pending.setCRE(cre);
 					}
 					catch (RuntimeException e){
-						Log.error ("Unexpected (and not handled) RuntimeException: " + e.getLocalizedMessage());
+						logger.error ("Unexpected (and not handled) RuntimeException: " + e.getLocalizedMessage());
 						e.printStackTrace();
 						pending.setCRE(new ProviderException("Unexpected runtime exception in response handler"));
 						pending.setResponse(null);
@@ -265,7 +267,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 	                e1.printStackTrace();
                 }
         	}
-			Log.log("Pipeline thread <%s> stopped.", Thread.currentThread().getName());
+			logger.info("Pipeline thread <%s> stopped.", Thread.currentThread().getName());
         }
     }
 }

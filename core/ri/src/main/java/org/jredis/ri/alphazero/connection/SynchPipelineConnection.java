@@ -26,7 +26,8 @@ import org.jredis.protocol.Command;
 import org.jredis.protocol.Response;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Synchronous {@link PipelineConnectionBase} extension.
@@ -37,6 +38,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class SynchPipelineConnection extends PipelineConnectionBase {
+    private static Logger logger = LoggerFactory.getLogger(SynchPipelineConnection.class);
+
 
     // ------------------------------------------------------------------------
     // Properties
@@ -97,7 +100,7 @@ public class SynchPipelineConnection extends PipelineConnectionBase {
         //
 		ResponseStatus status = Assert.notNull (response.getStatus(), "status from response object", ProviderException.class);
 		if(status.isError()) {
-			Log.error ("Error response for " + cmd.code + " => " + status.message());
+			logger.error ("Error response for " + cmd.code + " => " + status.message());
 			throw new RedisException(cmd, status.message());
 		}
 		/* this is handled by the super class */

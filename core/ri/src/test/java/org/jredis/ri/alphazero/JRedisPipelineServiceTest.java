@@ -21,7 +21,8 @@ import org.jredis.ClientRuntimeException;
 import org.jredis.JRedis;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -41,6 +42,8 @@ import org.testng.annotations.Test;
 @Test(sequential = true, suiteName="JRedisPipelineService-tests")
 //public class JRedisPipelineServiceTest extends JRedisProviderTestsBase {
 public class JRedisPipelineServiceTest extends ConcurrentJRedisProviderTestsBase {
+	
+    private static Logger logger = LoggerFactory.getLogger(ConcurrentJRedisProviderTestsBase.class);
 
 	// ------------------------------------------------------------------------
 	// TEST SETUP 
@@ -56,7 +59,7 @@ public class JRedisPipelineServiceTest extends ConcurrentJRedisProviderTestsBase
 			provider = new JRedisPipelineService(connectionSpec);
         }
         catch (ClientRuntimeException e) {
-        	Log.error(e.getLocalizedMessage());
+        	logger.error(e.getLocalizedMessage());
         }
         return provider;
 	}
@@ -78,7 +81,7 @@ public class JRedisPipelineServiceTest extends ConcurrentJRedisProviderTestsBase
 	 */
 	@AfterTest
 	public void testQuit() {
-		Log.log("TEST: QUIT command ");
+		logger.info("TEST: QUIT command ");
 		try {
 			JRedis service = getProviderInstance();
 			service.quit ();

@@ -18,7 +18,8 @@ package org.jredis.bench;
 
 import org.jredis.JRedis;
 import org.jredis.RedisException;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * [TODO: document me!]
@@ -29,6 +30,8 @@ import org.jredis.ri.alphazero.support.Log;
  * 
  */
 public class JRedisJProfileSubject {
+    private static Logger logger = LoggerFactory.getLogger(JRedisJProfileSubject.class);
+
 	private final JRedis jredis;
 
 	public JRedisJProfileSubject (JRedis jredis){
@@ -46,7 +49,7 @@ public class JRedisJProfileSubject {
 	 * @throws RedisException
 	 */
 	public void run () throws RedisException {
-		Log.log("***** JProfileTestCase ****");
+		logger.info("***** JProfileTestCase ****");
 //		jredis.auth("jredis").ping().flushall();
 		
 		int iter = 100000;

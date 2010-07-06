@@ -22,7 +22,8 @@ import org.jredis.connector.ConnectionSpec;
 import org.jredis.ri.alphazero.JRedisClient;
 import org.jredis.ri.alphazero.JRedisPipelineService;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jredis.ri.alphazero.support.DefaultCodec.*;
 
@@ -38,6 +39,7 @@ import static org.jredis.ri.alphazero.support.DefaultCodec.*;
  */
 
 public class UsingJRedisPipelineService {
+    private static Logger logger = LoggerFactory.getLogger(UsingJRedisPipelineService.class);
 
 	final JRedis jredis;
 	private UsingJRedisPipelineService() {
@@ -70,7 +72,7 @@ public class UsingJRedisPipelineService {
 	        jredis.sadd(key, "foobar");
         }
         catch (RedisException e) {
-        	Log.log("Expected elicited error: %s", e.getMessage());
+        	logger.info("Expected elicited error: %s", e.getMessage());
         }
     }
 

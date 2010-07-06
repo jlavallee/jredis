@@ -21,7 +21,8 @@ import org.jredis.ClientRuntimeException;
 import org.jredis.JRedisFuture;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -36,6 +37,7 @@ import org.testng.annotations.Test;
 @Test(sequential = true, suiteName="JRedisPipeline-tests")
 
 public class JRedisPipelineTest extends JRedisFutureProviderTestsBase {
+    private static Logger logger = LoggerFactory.getLogger(JRedisPipelineTest.class);
 
 	// ------------------------------------------------------------------------
 	// JRedisPipelineTest specific Test Suite Parameters
@@ -56,7 +58,7 @@ public class JRedisPipelineTest extends JRedisFutureProviderTestsBase {
 			provider = new JRedisPipeline(connectionSpec);
         }
         catch (ClientRuntimeException e) {
-        	Log.error(e.getLocalizedMessage());
+        	logger.error(e.getLocalizedMessage());
         }
         return provider;
 	}

@@ -37,7 +37,8 @@ import org.jredis.protocol.Command;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.JRedisTestSuiteBase;
 import org.jredis.ri.alphazero.support.DefaultCodec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -52,6 +53,7 @@ import org.testng.annotations.Test;
  */
 
 public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<JRedisFuture> {
+    private static Logger logger = LoggerFactory.getLogger(JRedisFutureProviderTestsBase.class);
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -79,7 +81,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 //	@Test
 //	public void testTemplate() throws InterruptedException {
 //		cmd = Command.PING.code + " | " + Command.SETNX.code + " byte[] | " + Command.GET;
-//		Log.log("TEST: %s command", cmd);
+//		logger.info("TEST: %s command", cmd);
 //		
 //		try {
 //			provider.flushdb();
@@ -96,7 +98,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSrandmember () throws InterruptedException {
 		cmd = Command.SRANDMEMBER.code + " String | " + Command.SMEMBERS;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -154,7 +156,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSmoveStringByteArray() throws InterruptedException{
 		cmd = Command.SMOVE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		provider.flushdb();
 		
@@ -193,7 +195,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testScard() throws InterruptedException {
 		cmd = Command.SCARD.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		provider.flushdb();
 		
@@ -225,7 +227,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZcard() throws InterruptedException {
 		cmd = Command.ZCARD.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		provider.flushdb();
 		
@@ -257,7 +259,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSismemberStringByteArray() throws InterruptedException {
 		cmd = Command.SISMEMBER.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		String setkey = keys.get(0);
 		
@@ -291,7 +293,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSmembers() throws InterruptedException{
 		cmd = Command.SMEMBERS.code + " byte[] | " + Command.SADD + "| " + Command.SCARD;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -335,7 +337,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZremStringByteArray() throws InterruptedException{
 		cmd = Command.ZADD.code + " byte[] | " + Command.ZREM.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -367,7 +369,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZaddStringByteArray() throws InterruptedException{
 		cmd = Command.ZADD.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -399,7 +401,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZscoreAndZincrbyStringByteArray() throws InterruptedException{
 		cmd = Command.ZSCORE.code + " byte[] | " + Command.ZINCRBY.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -447,7 +449,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZrangebyscoreStringByteArray() throws InterruptedException{
 		cmd = Command.ZRANGEBYSCORE.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -479,7 +481,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZremrangebyscoreStringByteArray() throws InterruptedException{
 		cmd = Command.ZREMRANGEBYSCORE.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -508,7 +510,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZcountStringByteArray() throws InterruptedException{
 		cmd = Command.ZCOUNT.code + " byte[] | " + Command.ZADD.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -537,7 +539,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZremrangebyrankStringByteArray() throws InterruptedException{
 		cmd = Command.ZREMRANGEBYRANK.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -566,7 +568,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZrankStringByteArray() throws InterruptedException{
 		cmd = Command.ZRANK.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -605,7 +607,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZrevrankStringByteArray() throws InterruptedException{
 		cmd = Command.ZREVRANK.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -642,7 +644,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZrangeWithscoresStringByteArray() throws InterruptedException{
 		cmd = Command.ZRANGE$OPTS.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -679,7 +681,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testZrevrangeWithscoresStringByteArray() throws InterruptedException{
 		cmd = Command.ZREVRANGE$OPTS.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -716,7 +718,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSaddStringByteArray() throws InterruptedException{
 		cmd = Command.SADD.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -749,7 +751,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSort() throws InterruptedException{
 		cmd = Command.SORT.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		final String setkey = "set-key";
 		final String listkey = "list-key";
@@ -773,19 +775,19 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 				assertEquals(sortListResp2.get().size(), cnt2, "expecting sort results of size 9");
 				assertEquals(sortListResp3.get().size(), cnt3, "expecting sort results of size 1");
 				
-				Log.log("TEST: SORTED LIST ");
+				logger.info("TEST: SORTED LIST ");
 				for(String s : toStr(sortListResp1.get()))
 					System.out.format("[t.1] %s\n", s);
 				
-				Log.log("TEST: SORTED LIST ");
+				logger.info("TEST: SORTED LIST ");
 				for(String s : toStr(sortListResp2.get()))
 					System.out.format("[t.1] %s\n", s);
 				
-				Log.log("TEST: SORTED LIST ");
+				logger.info("TEST: SORTED LIST ");
 				for(String s : toStr(sortListResp3.get()))
 					System.out.format("[t.1] %s\n", s);
 				
-				Log.log("TEST: SORTED SET ");
+				logger.info("TEST: SORTED SET ");
 				for(String s : toStr(sortSetResp.get()))
 					System.out.format("%s\n", s);
 			}
@@ -821,7 +823,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLsetStringIntByteArray() throws InterruptedException {
 		cmd = Command.LSET.code + " byte[] | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -858,14 +860,14 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 				
 				boolean expectedError = false;
 				try {
-					Log.log("Expecting an out of range ERROR for LSET here..");
+					logger.info("Expecting an out of range ERROR for LSET here..");
 	                expectedErrorResp.get(); // wait for response
 				}
 	            catch (ExecutionException e) {
 	            	expectedError = true;
 	            	Throwable cause = e.getCause();
 	            	if(cause instanceof RedisException)
-	            		Log.log("%s (as excepted)", cause);
+	            		logger.info("%s (as excepted)", cause);
 	            	else
 	            		fail("FAULT: the cause of ExecutionException was expected to be a RedisException");
 	            }
@@ -882,7 +884,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLremStringByteArrayInt() throws InterruptedException {
 		cmd = Command.LREM.code + " byte[] | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 
 		try {
 			provider.flushdb();
@@ -934,7 +936,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLrange() throws InterruptedException {
 		cmd = Command.LRANGE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -969,7 +971,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSubstr() throws InterruptedException {
 		cmd = Command.SUBSTR.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1006,7 +1008,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testRpop() throws InterruptedException {
 		cmd = Command.RPOP.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1041,7 +1043,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLpop() throws InterruptedException {
 		cmd = Command.LPOP.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1075,7 +1077,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLindex() throws InterruptedException {
 		cmd = Command.LINDEX.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1099,7 +1101,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLtrim() throws InterruptedException {
 		cmd = Command.LTRIM.code + " | " + Command.LLEN.code + " | " + Command.LRANGE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1146,7 +1148,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLpushStringByteArray() throws InterruptedException {
 		cmd = Command.LPUSH.code + " byte[] | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			boolean expected = false;
@@ -1186,7 +1188,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testLpoppushStringByteArray() throws InterruptedException {
 		cmd = Command.RPOPLPUSH.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1225,7 +1227,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testRpushStringByteArray() throws InterruptedException {
 		cmd = Command.RPUSH.code + " byte[] | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1266,7 +1268,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testMget() throws InterruptedException {
 		cmd = Command.MGET.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			for(int i=0; i<SMALL_CNT; i++){
@@ -1345,7 +1347,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testDel() throws InterruptedException {
 		cmd = Command.DEL.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1427,7 +1429,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testIncrAndDecr() throws InterruptedException {
 		cmd = Command.INCR.code + " | " + Command.DECR.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			String cntr_key = keys.get(0);
 
@@ -1457,7 +1459,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testIncrbyAndDecrby() throws InterruptedException {
 		cmd = Command.INCRBY.code + " |" + Command.DECRBY.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			String cntr_key = keys.get(0);
 
@@ -1487,7 +1489,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testGetSetStringByteArray() throws InterruptedException {
 		cmd = Command.SET.code + " | " + Command.GETSET.code + " byte[] ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			provider.set(keys.get(0), dataList.get(0));
@@ -1511,7 +1513,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testHsetHget() throws InterruptedException {
 		cmd = Command.HSET.code + " | " + Command.HGET + " | " + Command.HEXISTS;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			Future<Boolean> hsetResp1 = provider.hset(keys.get(0), keys.get(1), dataList.get(0));
@@ -1571,7 +1573,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testHkeys() throws InterruptedException {
 		cmd = Command.HSET.code + " | " + Command.HKEYS;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			Future<Boolean> hsetResp1 = provider.hset(keys.get(0), keys.get(1), dataList.get(0));
@@ -1620,7 +1622,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testHvals() throws InterruptedException {
 		cmd = Command.HSET.code + " | " + Command.HVALS;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			Future<Boolean> hsetResp1 = provider.hset(keys.get(0), keys.get(1), dataList.get(0));
@@ -1671,7 +1673,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testHgetall() throws InterruptedException {
 		cmd = Command.HSET.code + " | " + Command.HGETALL;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			Future<Boolean> hsetResp1 = provider.hset(keys.get(0), keys.get(1), dataList.get(0));
@@ -1739,7 +1741,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testSetStringByteArray() throws InterruptedException {
 		cmd = Command.SET.code + " | " + Command.SETNX.code + " byte[] | " + Command.GET;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			provider.set(keys.get(keys.size()-1), emptyBytes);
@@ -1767,7 +1769,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testAppendStringString() throws InterruptedException {
 		cmd = Command.APPEND.code + " | " + Command.GET.code + " String";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1830,7 +1832,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testRename() throws InterruptedException {
 		cmd = Command.RENAME.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			
 			String newkey = null;
@@ -1867,7 +1869,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testRenamenx() throws InterruptedException {
 		cmd = Command.RENAMENX.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			// flush db and set a key
 			provider.flushdb();
@@ -1914,7 +1916,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 			Command.FLUSHDB.code + " | " +
 			Command.KEYS.code;
 			
-		Log.log("TEST: %s commands", cmd);
+		logger.info("TEST: %s commands", cmd);
 		try {
 			key = "woof";
 			Future<ResponseStatus> flushResp = provider.flushdb();
@@ -1951,7 +1953,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	 */
 	@Test
 	public void testElicitErrors() throws InterruptedException {
-		Log.log("TEST: Elicit errors");
+		logger.info("TEST: Elicit errors");
 		try {
 			provider.flushdb();
 			
@@ -1974,7 +1976,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 			
 			expectedError = false;
 			try {
-				Log.log("1 - Expecting an operation against key holding the wrong kind of value ERROR for SADD..");
+				logger.info("1 - Expecting an operation against key holding the wrong kind of value ERROR for SADD..");
 				fSaddResp.get();
 			}
 			catch (ExecutionException e) { expectedError = true; }
@@ -1982,7 +1984,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 			
 			expectedError = false;
 			try {
-				Log.log("2 - Expecting an operation against key holding the wrong kind of value ERROR for SCARD..");
+				logger.info("2 - Expecting an operation against key holding the wrong kind of value ERROR for SCARD..");
 				fScardResp.get();
 			}
 			catch (ExecutionException e) { expectedError = true; }
@@ -1990,7 +1992,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 			
 			expectedError = false;
 			try {
-				Log.log("3 - Expecting an operation against key holding the wrong kind of value ERROR for LPOP ..");
+				logger.info("3 - Expecting an operation against key holding the wrong kind of value ERROR for LPOP ..");
 				fLpopResp.get();
 			}
 			catch (ExecutionException e) { expectedError = true; }
@@ -1998,7 +2000,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 			
 			expectedError = false;
 			try {
-				Log.log("4 - Expecting an operation against key holding the wrong kind of value ERROR for SMEMBERS ..");
+				logger.info("4 - Expecting an operation against key holding the wrong kind of value ERROR for SMEMBERS ..");
 				fSmembersResp.get();
 			}
 			catch (ExecutionException e) { expectedError = true; }
@@ -2021,7 +2023,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 		try {
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				
 				provider.set(key, smallData);  // don't wait for response ..
 				Future<Boolean> fBool = provider.sadd(key, dataList.get(0));
@@ -2032,7 +2034,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
             	expectedError = true;
             	Throwable cause = e.getCause();
             	if(cause instanceof RedisException)
-            		Log.log("%s (as excepted)", cause);
+            		logger.info("%s (as excepted)", cause);
             	else
             		fail("FAULT: the cause of ExecutionException was expected to be a RedisException");
             }
@@ -2051,7 +2053,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	public void testPing () throws InterruptedException {
 		Future<ResponseStatus> frStatus = null;
 		cmd = Command.PING.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			frStatus = provider.ping();
 			ResponseStatus status = frStatus.get();
@@ -2070,7 +2072,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	public void testFlushDb () throws InterruptedException {
 		Future<ResponseStatus> frStatus = null;
 		cmd = Command.FLUSHDB.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			frStatus = provider.flushdb();
 			ResponseStatus status = frStatus.get();
@@ -2085,7 +2087,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	public void testEcho() throws InterruptedException {
 		Future<byte[]> echoResp = null;
 		cmd = Command.ECHO.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			echoResp = provider.echo(dataList.get(0));
 			assertEquals(dataList.get(0), echoResp.get(), "data and echo results");
@@ -2110,7 +2112,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	public void testBgrewriteaof() throws InterruptedException {
 		Future<String> cmdRespMsg = null;
 		cmd = Command.BGREWRITEAOF.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			cmdRespMsg = provider.bgrewriteaof();
 			assertTrue(cmdRespMsg.get() != null, "cmd response message should not be null");
@@ -2129,14 +2131,14 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	public void testDebug () throws InterruptedException {
 		Future<ObjectInfo> frInfo = null;
 		cmd = Command.DEBUG.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			provider.set("foo", "bar");
 			frInfo = provider.debug("foo");
 			ObjectInfo info = frInfo.get();
 			assertNotNull(info);
-			Log.log("DEBUG of key => %s", info);
+			logger.info("DEBUG of key => %s", info);
 		}
         catch (ExecutionException e) {
 	        e.printStackTrace();
@@ -2147,14 +2149,14 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	@Test
 	public void testExpireat() throws InterruptedException {
 		cmd = Command.EXPIREAT.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb().get();
 			String keyToExpire = "expire-me";
 			provider.set(keyToExpire, dataList.get(0)).get();
 
 			long expireTime = System.currentTimeMillis() + 500;
-			Log.log("TEST: %s with expire time 1000 msecs in future", Command.EXPIREAT);
+			logger.info("TEST: %s with expire time 1000 msecs in future", Command.EXPIREAT);
 			assertTrue(provider.expireat(keyToExpire, expireTime).get(), "expireat for existing key should be true");
 			assertTrue(!provider.expireat("no-such-key", expireTime).get(), "expireat for non-existant key should be false");
 			assertTrue (provider.exists(keyToExpire).get());

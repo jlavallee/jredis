@@ -24,7 +24,8 @@ import org.jredis.connector.ConnectionSpec.SocketFlag;
 import org.jredis.connector.ConnectionSpec.SocketProperty;
 import org.jredis.ri.alphazero.JRedisClient;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Illustrates using the {@link ConnectionSpec} as a parameter when creating the {@link JRedisClient}.
@@ -33,6 +34,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class UsingConnectionSpec {
+    private static Logger logger = LoggerFactory.getLogger(UsingConnectionSpec.class);
+
 	public static void main (String[] args) {
 	    exampleUsingDefaultConnectionSpec ();
 	    exampleUsingCustomTCPSettings();
@@ -98,13 +101,13 @@ public class UsingConnectionSpec {
 		    	//
 		    	JRedisClient jredis = new JRedisClient(connectionSpec);
 		        jredis.ping();
-		        Log.log("Sweet success -- we're connected using custom TCP settings");
+		        logger.info("Sweet success -- we're connected using custom TCP settings");
 	        }
 	        catch (RedisException e) {
-		        Log.error("Failed to connect to Redis using JRedisClient custom ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
+		        logger.error("Failed to connect to Redis using JRedisClient custom ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
 	        }
             catch (UnknownHostException e) {
-            	Log.error("Unknownhost: " + e.getLocalizedMessage());
+            	logger.error("Unknownhost: " + e.getLocalizedMessage());
             }
     	}
     }
@@ -127,10 +130,10 @@ public class UsingConnectionSpec {
 	    	JRedisClient jredis = new JRedisClient(connectionSpec);
 	    	try {
 		        jredis.ping();
-		        Log.log("Sweet success -- we're connected using all default values.");
+		        logger.info("Sweet success -- we're connected using all default values.");
 	        }
 	        catch (RedisException e) {
-		        Log.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
+		        logger.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
 	        }
     	}
     	
@@ -149,10 +152,10 @@ public class UsingConnectionSpec {
 	    	JRedisClient jredis = new JRedisClient(connectionSpec);
 	    	try {
 		        jredis.ping();
-		        Log.log("Sweet success -- we're connected using %s as password to %d database.", password, database);
+		        logger.info("Sweet success -- we're connected using %s as password to %d database.", password, database);
 	        }
 	        catch (RedisException e) {
-		        Log.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
+		        logger.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
 	        }
     	}
     	
@@ -174,13 +177,13 @@ public class UsingConnectionSpec {
 		    	//
 		    	JRedisClient jredis = new JRedisClient(connectionSpec);
 		        jredis.ping();
-		        Log.log("Sweet success -- we're connected using default specs and various server info settings.");
+		        logger.info("Sweet success -- we're connected using default specs and various server info settings.");
 	        }
 	        catch (RedisException e) {
-		        Log.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
+		        logger.error("Failed to connect to Redis using JRedisClient default ConnectionSpec -- password perhaps? => " + e.getLocalizedMessage());
 	        }
             catch (UnknownHostException e) {
-            	Log.error("Unknownhost: " + e.getLocalizedMessage());
+            	logger.error("Unknownhost: " + e.getLocalizedMessage());
             }
     	}
     }

@@ -23,7 +23,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import org.jredis.ri.alphazero.support.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 
@@ -47,6 +49,8 @@ import org.testng.annotations.Parameters;
 //TODO: get rid of NG in class name
 
 public abstract class JRedisTestSuiteBase<T> extends ProviderTestBase<T>{
+    private static Logger logger = LoggerFactory.getLogger(JRedisTestSuiteBase.class);
+
 	// ------------------------------------------------------------------------
 	// General RI Test Suite Parameters with default values
 	// ------------------------------------------------------------------------
@@ -179,7 +183,7 @@ public abstract class JRedisTestSuiteBase<T> extends ProviderTestBase<T>{
 		this.expire_secs = expire_secs;
 		this.expire_wait_millisecs = expire_wait_millisecs;
 
-		Log.log("Suite parameters initialized <suiteParametersInit>");
+		logger.info("Suite parameters initialized <suiteParametersInit>");
 
 		setupTestSuiteData();
 	}	
@@ -220,25 +224,25 @@ public abstract class JRedisTestSuiteBase<T> extends ProviderTestBase<T>{
 			set1.add(m);
 			set2.add(m);
 		}
-		Log.log("TEST-SUITE-INIT: JRedis Provider Test Suite random test data created");
+		logger.info("TEST-SUITE-INIT: JRedis Provider Test Suite random test data created");
 
 	}
 
 	protected final void prepTestDBs() {
 		//	try {
 		//		jredis.auth(password);
-		//		Log.log("TEST-PREP: AUTH with password %s" + password);
+		//		logger.info("TEST-PREP: AUTH with password %s" + password);
 		//	} 
 		//	catch (RedisException e) {
-		//		Log.error("AUTH with password " + password + " => " + e.getLocalizedMessage());
+		//		logger.error("AUTH with password " + password + " => " + e.getLocalizedMessage());
 		//		fail("AUTH with password: " + password, e);
 		//	}
 		//	try {
 		//		jredis.select(db1).flushdb().select(db2).flushdb().select(db1);
-		//		Log.log("TEST-PREP: %s:%d Redis server DB %d & %d flushed", host, port, db1, db2);
+		//		logger.info("TEST-PREP: %s:%d Redis server DB %d & %d flushed", host, port, db1, db2);
 		//	} 
 		//	catch (RedisException e) {
-		//		Log.error("SELECT/FLUSHDB for test prep" + password);
+		//		logger.error("SELECT/FLUSHDB for test prep" + password);
 		//		fail("SELECT/FLUSHDB for test prep", e);
 		//	}
 	}

@@ -31,7 +31,8 @@ import org.jredis.connector.ConnectionSpec.SocketProperty;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.alphazero.JRedisPipeline;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Pipelines are an order of magnitude faster than the request/reply connectors.
@@ -47,6 +48,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class PipelineInAction {
+    private static Logger logger = LoggerFactory.getLogger(PipelineInAction.class);
+
 	public static void main (String[] args) {
     	final ConnectionSpec spec = DefaultConnectionSpec.newSpec();
     	spec.setCredentials("jredis".getBytes());
@@ -89,7 +92,7 @@ public class PipelineInAction {
 	        
         }
         catch (RedisException e) {
-        	Log.problem("RedisException: " + e);
+        	logger.warn("RedisException: " + e);
         }
         finally{
         	pipeline.sync().quit();

@@ -21,7 +21,8 @@ import org.jredis.ClientRuntimeException;
 import org.jredis.JRedis;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
@@ -42,6 +43,7 @@ import org.testng.annotations.Test;
 @Test(sequential = true, suiteName="JRedisService-tests")
 //public class JRedisServiceTest extends JRedisProviderTestsBase {
 public class JRedisServiceTest extends ConcurrentJRedisProviderTestsBase {
+    private static Logger logger = LoggerFactory.getLogger(JRedisServiceTest.class);
 	
 	// ------------------------------------------------------------------------
 	// JRedisService specific Test Suite Parameters with default values
@@ -64,8 +66,8 @@ public class JRedisServiceTest extends ConcurrentJRedisProviderTestsBase {
 		) 
 	{
 		this.connectionCnt = connectionCount;
-		Log.log("JRedisServiceTest: Using %d connections", connectionCount);
-		Log.log("JRedisService Suite parameters initialized <suiteParametersInit>");
+		logger.info("JRedisServiceTest: Using %d connections", connectionCount);
+		logger.info("JRedisService Suite parameters initialized <suiteParametersInit>");
 	}	
 
 	/* (non-Javadoc)
@@ -78,7 +80,7 @@ public class JRedisServiceTest extends ConcurrentJRedisProviderTestsBase {
 			provider = new JRedisService(connectionSpec, this.connectionCnt);
         }
         catch (ClientRuntimeException e) {
-        	Log.error(e.getLocalizedMessage());
+        	logger.error(e.getLocalizedMessage());
         }
         return provider;
 	}
@@ -100,7 +102,7 @@ public class JRedisServiceTest extends ConcurrentJRedisProviderTestsBase {
 	 */
 	@AfterTest
 	public void testQuit() {
-		Log.log("TEST: QUIT command -- WARNING: using quit with JRedisService should not be allowed!");
+		logger.info("TEST: QUIT command -- WARNING: using quit with JRedisService should not be allowed!");
 		try {
 			JRedis service = getProviderInstance();
 			service.quit ();

@@ -21,7 +21,8 @@ import org.jredis.connector.Connection;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.connector.Connection.Modality;
 import org.jredis.protocol.Command;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A demon thread tasked with PINGing the associated connection
@@ -36,6 +37,8 @@ import org.jredis.ri.alphazero.support.Log;
  * 
  */
 public class HeartbeatJinn extends Thread{
+	
+    private static Logger logger = LoggerFactory.getLogger(HeartbeatJinn.class);
 
 	/**  */
 	AtomicBoolean connected;
@@ -73,7 +76,7 @@ public class HeartbeatJinn extends Thread{
 		mustBeat.set(false);
 	}
 	public void run () {
-//		Log.log("HeartbeatJinn thread <%s> started.", getName());
+//		logger.info("HeartbeatJinn thread <%s> started.", getName());
 		while (mustBeat.get()) {
 			try {
 				if(connected.get()){  // << buggy.
@@ -94,7 +97,7 @@ public class HeartbeatJinn extends Thread{
 						// otherwise ignore it and basically loop on sleep until we get notify on connect again (if ever).
 						if(connected.get()){
 							// how now brown cow?  we'll log it for now and assume reconnect try in progress and wait for the flag change.
-							Log.problem("HeartbeatJinn thread <" + Thread.currentThread().getName() + "> encountered exception on PING: " + e.getMessage() );
+							logger.warn("HeartbeatJinn thread <" + Thread.currentThread().getName() + "> encountered exception on PING: " + e.getMessage() );
 							connected.set(false);
 						}
 					}
@@ -103,7 +106,7 @@ public class HeartbeatJinn extends Thread{
 			}
 			catch (InterruptedException e) { break; }
 		}
-		Log.log("HeartbeatJinn thread <%s> stopped.", Thread.currentThread().getName());
+		logger.info("HeartbeatJinn thread <%s> stopped.", Thread.currentThread().getName());
 	}
 	@Override
 	public void interrupt () {

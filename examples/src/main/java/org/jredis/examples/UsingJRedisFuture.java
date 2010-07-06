@@ -25,7 +25,8 @@ import org.jredis.JRedisFuture;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.alphazero.support.DefaultCodec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example usage of {@link JRedisFuture}, demonstrating the asynchronous semantics.
@@ -42,6 +43,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public abstract class UsingJRedisFuture {
+    private static Logger logger = LoggerFactory.getLogger(UsingJRedisFuture.class);
+
 	
 	// ------------------------------------------------------------------------
 	// EXAMPLES:
@@ -57,7 +60,7 @@ public abstract class UsingJRedisFuture {
 	 * @throws InterruptedException 
 	 */
 	public void theBasics () throws InterruptedException {
-		Log.log("theBasics()");
+		logger.info("theBasics()");
 		
 		/*******************************************/
 		// fire and forget -- no exception handling and not even bothering about the response
@@ -90,7 +93,7 @@ public abstract class UsingJRedisFuture {
 	         * So we have our response at this point.  We can check it, etc.
 	         */
 	        if(response.isError()){
-	        	Log.error("PING returned an ERR response -- is it an authorization issue?");
+	        	logger.error("PING returned an ERR response -- is it an authorization issue?");
 	        }
         }
         catch (InterruptedException e) {
@@ -100,7 +103,7 @@ public abstract class UsingJRedisFuture {
         	 * If this is all greek to you, then simply log and re-throw it back up, or add InterruptedException
         	 * to your method signatures.    
         	 */
-        	Log.problem("thread was interrupted while waiting for the response to be processed.");
+        	logger.warn("thread was interrupted while waiting for the response to be processed.");
         	throw e;
         }
         catch (ExecutionException e) {
@@ -113,7 +116,7 @@ public abstract class UsingJRedisFuture {
         	 * 
         	 * So what need to happen is for you to get the underlying 'cause' of the generalized ExecutionException.
         	 */
-        	Log.problem("An execution exception occurred");
+        	logger.warn("An execution exception occurred");
         }
 		
 		/*******************************************/
@@ -146,7 +149,7 @@ public abstract class UsingJRedisFuture {
 	            }
 	        }
 			t1 = System.nanoTime() - t1;
-        	Log.log("done after %d timeouts (%d nanos)", toCnt, t1);
+        	logger.info("done after %d timeouts (%d nanos)", toCnt, t1);
 	        
         }
         catch (InterruptedException e) {
@@ -156,7 +159,7 @@ public abstract class UsingJRedisFuture {
         	 * If this is all greek to you, then simply log and re-throw it back up, or add InterruptedException
         	 * to your method signatures.    
         	 */
-        	Log.problem("thread was interrupted while waiting for the response to be processed.");
+        	logger.warn("thread was interrupted while waiting for the response to be processed.");
         	throw e;
         }
         catch (ExecutionException e) {
@@ -169,7 +172,7 @@ public abstract class UsingJRedisFuture {
         	 * 
         	 * So what need to happen is for you to get the underlying 'cause' of the generalized ExecutionException.
         	 */
-        	Log.problem("An execution exception occurred");
+        	logger.warn("An execution exception occurred");
         }
 		
 	}
@@ -192,7 +195,7 @@ public abstract class UsingJRedisFuture {
 	        runExamples();
         }
         catch (InterruptedException e) {
-        	Log.problem("Interrupted while running the examples.");
+        	logger.warn("Interrupted while running the examples.");
 	        e.printStackTrace();
         }
         jredis.quit();
@@ -203,7 +206,7 @@ public abstract class UsingJRedisFuture {
      * 
      */
     private void runExamples () throws InterruptedException {
-		Log.log("running the JRedisFuture usage examples with %s as the provider implementation.", jredis.getClass().getSimpleName());
+		logger.info("running the JRedisFuture usage examples with %s as the provider implementation.", jredis.getClass().getSimpleName());
 		
     	theBasics();
     }
