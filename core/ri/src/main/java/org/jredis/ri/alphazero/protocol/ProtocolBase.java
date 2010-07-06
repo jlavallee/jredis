@@ -32,7 +32,8 @@ import org.jredis.protocol.Response;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.alphazero.support.Assert;
 import org.jredis.ri.alphazero.support.Convert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -44,6 +45,7 @@ import org.jredis.ri.alphazero.support.Log;
  * 
  */
 public abstract class ProtocolBase implements Protocol {
+    private static Logger logger = LoggerFactory.getLogger(ProtocolBase.class);
 
 	// ------------------------------------------------------------------------
 	// Protocol Revision specific 
@@ -378,11 +380,11 @@ public abstract class ProtocolBase implements Protocol {
 				out.flush();
 			}
 			catch (SocketException e){
-				Log.error("StreamBufferRequest.write(): SocketException on write: " + e.getLocalizedMessage());
+				logger.error("StreamBufferRequest.write(): SocketException on write: " + e.getLocalizedMessage());
 				throw new ClientRuntimeException ("socket exception", e);
 			}
 			catch (IOException e) { 
-				Log.error("StreamBufferRequest.write(): IOException on write: " + e.getLocalizedMessage());
+				logger.error("StreamBufferRequest.write(): IOException on write: " + e.getLocalizedMessage());
 				throw new ClientRuntimeException ("stream io exception", e);
 			}
 		}

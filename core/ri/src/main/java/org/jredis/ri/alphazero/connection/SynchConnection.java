@@ -29,7 +29,8 @@ import org.jredis.protocol.Response;
 import org.jredis.protocol.ResponseStatus;
 import org.jredis.ri.alphazero.RedisVersion;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -41,6 +42,7 @@ import org.jredis.ri.alphazero.support.Log;
  * 
  */
 public class SynchConnection extends ConnectionBase implements Connection {
+    private static Logger logger = LoggerFactory.getLogger(SynchConnection.class);
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -127,35 +129,35 @@ public class SynchConnection extends ConnectionBase implements Connection {
 		
 		try {
 			// 1 - Request
-			//				Log.log("RedisConnection - requesting ..." + cmd.code);
+			//				logger.info("RedisConnection - requesting ..." + cmd.code);
 			
 			request = Assert.notNull(protocol.createRequest (cmd, args), "request object from handler", ProviderException.class);
 			request.write(super.getOutputStream());
 
 			// 2 - response
-			//				Log.log("RedisConnection - read response ..." + cmd.code);
+			//				logger.info("RedisConnection - read response ..." + cmd.code);
 			response = Assert.notNull(protocol.createResponse(cmd), "response object from handler", ProviderException.class);
 			response.read(super.getInputStream());
 
 			//				break;
 		}
 		catch (ProviderException bug){
-			Log.bug ("serviceRequest() -- ProviderException: " + bug.getLocalizedMessage());
-			Log.log ("serviceRequest() -- closing connection ...");
+			logger.error("serviceRequest() -- ProviderException: " + bug.getLocalizedMessage()); // was Log.bug
+			logger.info("serviceRequest() -- closing connection ...");
 			disconnect();
 			throw bug;
 		}
 		catch (ClientRuntimeException cre) {
-			Log.problem ("serviceRequest() -- ClientRuntimeException  => " + cre.getLocalizedMessage());
+			logger.warn ("serviceRequest() -- ClientRuntimeException  => " + cre.getLocalizedMessage());
 			reconnect();
 			
 			throw new ConnectionResetException ("Connection re-established but last request not processed:  " + cre.getLocalizedMessage());
 		}
 		catch (RuntimeException e){
 			e.printStackTrace();
-			Log.bug ("serviceRequest() -- *unexpected* RuntimeException: " + e.getLocalizedMessage());
+			logger.error("serviceRequest() -- *unexpected* RuntimeException: " + e.getLocalizedMessage()); // was Log.bug
 
-			Log.log ("serviceRequest() -- closing connection ...");
+			logger.info ("serviceRequest() -- closing connection ...");
 			disconnect();
 
 			throw new ClientRuntimeException("unexpected runtime exeption: " + e.getLocalizedMessage(), e);
@@ -165,7 +167,7 @@ public class SynchConnection extends ConnectionBase implements Connection {
 		//
 		status = Assert.notNull (response.getStatus(), "status from response object", ProviderException.class);
 		if(status.isError()) {
-			Log.error ("Error response for " + cmd.code + " => " + status.message());
+			logger.error ("Error response for " + cmd.code + " => " + status.message());
 			throw new RedisException(cmd, status.message());
 		}
 		else if(status.code() == ResponseStatus.Code.CIAO) {

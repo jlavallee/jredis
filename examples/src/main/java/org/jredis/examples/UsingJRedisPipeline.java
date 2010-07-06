@@ -24,7 +24,8 @@ import org.jredis.RedisException;
 import org.jredis.connector.ConnectionSpec;
 import org.jredis.ri.alphazero.JRedisPipeline;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extension of {@link UsingJRedisFuture} with a {@link JRedisPipeline} as the 
@@ -43,6 +44,7 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class UsingJRedisPipeline extends UsingJRedisFuture {
+    private static Logger logger = LoggerFactory.getLogger(UsingJRedisPipeline.class);
 
 	public static void main (String[] args) {
 		int database = 11;
@@ -110,7 +112,7 @@ public class UsingJRedisPipeline extends UsingJRedisFuture {
 	        
         }
         catch (RedisException e) {
-        	Log.problem("RedisException: " + e);
+        	logger.warn("RedisException: " + e);
         }
         finally{
         	pipeline.sync().quit();

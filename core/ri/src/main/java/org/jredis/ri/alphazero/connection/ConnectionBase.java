@@ -49,7 +49,8 @@ import org.jredis.ri.alphazero.protocol.ConcurrentSynchProtocol;
 import org.jredis.ri.alphazero.support.Assert;
 import org.jredis.ri.alphazero.support.Convert;
 import org.jredis.ri.alphazero.support.FastBufferedInputStream;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This abstract class is responsible for managing the socket connection, and, defining
@@ -68,6 +69,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public abstract class ConnectionBase implements Connection {
+	
+    private static Logger logger = LoggerFactory.getLogger(ConnectionBase.class);
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -297,7 +300,7 @@ public abstract class ConnectionBase implements Connection {
 	 * @throws IllegalStateException if not (logically) connected.
 	 */
 	protected final void reconnect () {
-		Log.log("RedisConnection - reconnecting");
+		logger.info("RedisConnection - reconnecting");
 		int attempts = 0;
 
 		while(true){
@@ -307,7 +310,7 @@ public abstract class ConnectionBase implements Connection {
 				break;
 			}
 			catch (RuntimeException e){
-				Log.error("while attempting reconnect: " + e.getMessage());
+				logger.error("while attempting reconnect: " + e.getMessage());
 				if(++attempts == spec.getReconnectCnt()) {
 //					Log.problem("Retry limit exceeded attempting reconnect.");
 					
@@ -330,7 +333,7 @@ public abstract class ConnectionBase implements Connection {
 	 */
 	protected final void onConnectionFault (String fault, boolean raiseEx) throws ClientRuntimeException {
 		notifyFaulted(fault);
-		Log.problem("Connection Fault ["+this+"]: " + fault);
+		logger.warn("Connection Fault ["+this+"]: " + fault);
  		if(raiseEx) throw new ClientRuntimeException(fault);
 	}
 
@@ -373,7 +376,7 @@ public abstract class ConnectionBase implements Connection {
         	throw new IllegalArgumentException("Failed to connect -- check credentials and/or database settings for the connection spec", e);
         }
 		
-//		Log.log("RedisConnection - connected");
+//		logger.info("RedisConnection - connected");
 		notifyConnected();
 	}
 
@@ -387,7 +390,7 @@ public abstract class ConnectionBase implements Connection {
 		isConnected = false;
 
 		notifyDisconnected();
-//		Log.log("RedisConnection - disconnected");
+//		logger.info("RedisConnection - disconnected");
 	}
 	
 	/**
@@ -425,7 +428,7 @@ public abstract class ConnectionBase implements Connection {
 		
 		socket.connect(socketAddress);
 		
-//		Log.log("RedisConnection - socket connected to %s:%d", socketAddress.getHostName(), port);
+//		logger.info("RedisConnection - socket connected to %s:%d", socketAddress.getHostName(), port);
 	}
 
 	/**
@@ -436,7 +439,7 @@ public abstract class ConnectionBase implements Connection {
 			if(null != socket) socket.close();
 		}
 		catch (IOException e) {
-			Log.error("[IO] on closeSocketConnect -- socketClose() continues ..." + e.getLocalizedMessage());
+			logger.error("[IO] on closeSocketConnect -- socketClose() continues ..." + e.getLocalizedMessage());
 		}
 		finally {
 			socket = null;

@@ -22,7 +22,8 @@ import static org.jredis.ri.alphazero.support.DefaultCodec.*;
 import org.jredis.JRedis;
 import org.jredis.RedisException;
 import org.jredis.protocol.Command;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -35,6 +36,9 @@ import org.testng.annotations.Test;
  */
 
 public abstract class ConcurrentJRedisProviderTestsBase extends JRedisProviderTestsBase {
+	
+    private static Logger logger = LoggerFactory.getLogger(ConcurrentJRedisProviderTestsBase.class);
+
 
 	/*
 		switch (command.responseType){
@@ -50,7 +54,7 @@ public abstract class ConcurrentJRedisProviderTestsBase extends JRedisProviderTe
 		String cmd = Command.GET.responseType.name();
 		String threadName = Thread.currentThread().getName();
 		String key = threadName + "::" + keys.get(0);
-		Log.log("CONCURRENT TEST: %s resp type command | key: %s", cmd, key);
+		logger.info("CONCURRENT TEST: %s resp type command | key: %s", cmd, key);
 		try {
 			provider.del(key);
 			provider.set (key, threadName);
@@ -70,7 +74,7 @@ public abstract class ConcurrentJRedisProviderTestsBase extends JRedisProviderTe
 		String cmd = Command.EXISTS.responseType.name();
 		String threadName = Thread.currentThread().getName();
 		String key = threadName + "::" + keys.get(0);
-		Log.log("CONCURRENT TEST: %s resp type command | key: %s", cmd, key);
+		logger.info("CONCURRENT TEST: %s resp type command | key: %s", cmd, key);
 		try {
 			provider.set (key, threadName);
 //			assertTrue (provider.del (key), "del response should be OK");
@@ -87,7 +91,7 @@ public abstract class ConcurrentJRedisProviderTestsBase extends JRedisProviderTe
 	public void testConcurrentNumberCommands() {
 		String cmd = Command.INCR.responseType.name();
 		String cntr_key = Thread.currentThread().getName() + "::" + keys.get(0);
-		Log.log("CONCURRENT TEST: %s resp type command | key: %s", cmd, cntr_key);
+		logger.info("CONCURRENT TEST: %s resp type command | key: %s", cmd, cntr_key);
 		try {
 			provider.del(cntr_key);
 			for(int i = 1; i<50; i++)

@@ -37,7 +37,8 @@ import org.jredis.protocol.ValueResponse;
 import org.jredis.ri.alphazero.connection.ConnectionResetException;
 import org.jredis.ri.alphazero.connection.UnexpectedEOFException;
 import org.jredis.ri.alphazero.support.Convert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +50,8 @@ import org.jredis.ri.alphazero.support.Log;
  * 
  */
 public class SynchProtocol extends ProtocolBase {
-	
+    private static Logger logger = LoggerFactory.getLogger(SynchProtocol.class);
+
 	// ------------------------------------------------------------------------
 	// Protocol Handler's Data Buffer (pseudo-Registers) specific attributes
 	// ------------------------------------------------------------------------
@@ -240,7 +242,7 @@ public class SynchProtocol extends ProtocolBase {
 					}
 				}
 				if(c == -1) {
-					Log.error("-1 read count in readLine() while reading response line.");
+					logger.error("-1 read count in readLine() while reading response line.");
 					throw new UnexpectedEOFException ("Unexpected EOF (read -1) in readLine.  Command: " + cmd.code);
 				}
 				if((this.isError = buffer[0] == ProtocolBase.ERR_BYTE) == true) 

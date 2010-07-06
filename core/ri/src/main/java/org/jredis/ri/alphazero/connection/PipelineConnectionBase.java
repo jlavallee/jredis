@@ -38,7 +38,8 @@ import org.jredis.ri.alphazero.protocol.ConcurrentSynchProtocol;
 import org.jredis.ri.alphazero.protocol.VirtualResponse;
 import org.jredis.ri.alphazero.support.Assert;
 import org.jredis.ri.alphazero.support.FastBufferedInputStream;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base for all Pipeline connections, providing basically all of the
@@ -58,6 +59,7 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public abstract class PipelineConnectionBase extends ConnectionBase {
+    private static Logger logger = LoggerFactory.getLogger(PipelineConnectionBase.class);
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -126,14 +128,14 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
     @Override
     protected void notifyConnected () {
     	super.notifyConnected();
-		Log.log("Pipeline <%s> connected", this);
+		logger.info("Pipeline <%s> connected", this);
     	isActive.set(true);
     	connectionEstablished.countDown();
     }
     @Override
     protected void notifyDisconnected () {
     	super.notifyDisconnected();
-		Log.log("Pipeline <%s> disconnected", this);
+		logger.info("Pipeline <%s> disconnected", this);
     	isActive.set(true);
     	connectionEstablished.countDown();
     }
@@ -204,7 +206,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
     }
 
     private void onResponseHandlerError (ClientRuntimeException cre, PendingRequest request) {
-    	Log.error("Pipeline response handler encountered an error: " + cre.getMessage());
+    	logger.error("Pipeline response handler encountered an error: " + cre.getMessage());
     	
     	// signal fault
     	onConnectionFault(cre.getMessage(), false);
@@ -226,7 +228,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 			try {
 				pending = pendingResponseQueue.remove();
 				pending.setCRE(cre);
-				Log.log("set pending %s response to error with CRE", pending.cmd);
+				logger.error("set pending %s response to error with CRE", pending.cmd);
 			}
 			catch (NoSuchElementException empty){ break; }
 		}
@@ -279,7 +281,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
     	 */
 //        @Override
         public void run () {
-			Log.log("Pipeline <%s> thread for <%s> started.", Thread.currentThread().getName(), PipelineConnectionBase.this);
+			logger.info("Pipeline <%s> thread for <%s> started.", Thread.currentThread().getName(), PipelineConnectionBase.this);
         	PendingRequest pending = null;
         	while(true){
         		Response response = null;
@@ -291,7 +293,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 						pending.response = response;
 						pending.completion.signal();
 						if(response.getStatus().isError()) {
-							Log.error ("(Asynch) Error response for " + pending.cmd.code + " => " + response.getStatus().message());
+							logger.error ("(Asynch) Error response for " + pending.cmd.code + " => " + response.getStatus().message());
 						}
 
 					}
@@ -304,17 +306,17 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 					// major TODO
 					
 					catch (ProviderException bug){
-						Log.bug ("ProviderException: " + bug.getMessage());
+						logger.error("ProviderException: " + bug.getMessage()); // was Log.bug
 						onResponseHandlerError(bug, pending);
 						break;
 					}
 					catch (ClientRuntimeException cre) {
-						Log.problem ("ClientRuntimeException: " + cre.getMessage());
+						logger.error("ClientRuntimeException: " + cre.getMessage());
 						onResponseHandlerError(cre, pending);
 						break;
 					}
 					catch (RuntimeException e){
-						Log.problem ("Unexpected (and not handled) RuntimeException: " + e.getMessage());
+						logger.error("Unexpected (and not handled) RuntimeException: " + e.getMessage());
 						onResponseHandlerError(new ClientRuntimeException("Unexpected (and not handled) RuntimeException", e), pending);
 						break;
 					}
@@ -331,7 +333,7 @@ public abstract class PipelineConnectionBase extends ConnectionBase {
 	                e1.printStackTrace();
                 }
         	}
-			Log.log("Pipeline <%s> thread for <%s> stopped.", Thread.currentThread().getName(), PipelineConnectionBase.this);
+			logger.info("Pipeline <%s> thread for <%s> stopped.", Thread.currentThread().getName(), PipelineConnectionBase.this);
 //			Log.log("Pipeline thread <%s> stopped.", Thread.currentThread().getName());
         }
 

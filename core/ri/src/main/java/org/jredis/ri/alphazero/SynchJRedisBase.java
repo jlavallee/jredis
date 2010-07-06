@@ -32,7 +32,8 @@ import org.jredis.resource.ResourceException;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
 import org.jredis.ri.alphazero.connection.SynchConnection;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * [TODO: document me!]
@@ -44,6 +45,9 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public abstract class SynchJRedisBase extends JRedisSupport implements Resource<JRedis> {
+	
+    private static Logger logger = LoggerFactory.getLogger(SynchJRedisBase.class);
+
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -90,7 +94,7 @@ public abstract class SynchJRedisBase extends JRedisSupport implements Resource<
 		}
 		catch (UnknownHostException e) {
 			String msg = "Couldn't obtain InetAddress for "+host;
-			Log.problem (msg+"  => " + e.getLocalizedMessage());
+			logger.warn (msg+"  => " + e.getLocalizedMessage());
 			throw new ClientRuntimeException(msg, e);
 		}
 		return synchConnection;
@@ -111,16 +115,16 @@ public abstract class SynchJRedisBase extends JRedisSupport implements Resource<
 			Assert.notNull(synchConnection, "connection delegate", ClientRuntimeException.class);
 		}
 		catch (NotSupportedException e) {
-			Log.log("Can not support redis protocol '%s'", redisVersion);
+			logger.info("Can not support redis protocol '%s'", redisVersion);
 			throw e;
 		}
 		catch (ProviderException e) {
-			Log.bug("Couldn't create the handler delegate.  => " + e.getLocalizedMessage());
+			logger.error("Couldn't create the handler delegate.  => " + e.getLocalizedMessage()); // was Log.bug
 			throw e;
 		}
 		catch (ClientRuntimeException e) {
 			String msg = e.getMessage() + "\nMake sure your server is running.";
-			Log.error ("Error creating connection -> " + e.getLocalizedMessage());
+    		logger.error ("Error creating connection -> " + e.getLocalizedMessage());
 //			setConnection(new FaultedConnection(connectionSpec, msg));
 			synchConnection = new FaultedConnection(connectionSpec, msg);
 		}

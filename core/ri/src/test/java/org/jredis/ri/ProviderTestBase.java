@@ -18,7 +18,8 @@ package org.jredis.ri;
 
 import org.jredis.ClientRuntimeException;
 //import org.jredis.JRedis;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 
 /**
@@ -31,7 +32,8 @@ import org.testng.annotations.BeforeTest;
  */
 
 public abstract class ProviderTestBase <T> {
-	
+    private static Logger logger = LoggerFactory.getLogger(ProviderTestBase.class);
+
 	// ========================================================================
 	// Test Properties
 	// ========================================================================
@@ -51,10 +53,10 @@ public abstract class ProviderTestBase <T> {
 			T provider = newProviderInstance();
 
 			setProviderInstance (provider);
-			Log.log("%s.setProvider - done", this.getClass().getSimpleName());
+			logger.info("%s.setProvider - done", this.getClass().getSimpleName());
         }
         catch (ClientRuntimeException e) {
-        	Log.error(e.getLocalizedMessage());
+        	logger.error(e.getLocalizedMessage());
         }
 	}
 	
@@ -71,7 +73,7 @@ public abstract class ProviderTestBase <T> {
 	 */
 	private final void setProviderInstance (T provider) {
 		this.provider = provider;
-		Log.log("\n\nTEST: " +
+		logger.info("\n\nTEST: " +
 				"\n\t-----------------------------------------------\n" +
 				"\tProvider Class: %s" +
 				"\n\t-----------------------------------------------\n", 

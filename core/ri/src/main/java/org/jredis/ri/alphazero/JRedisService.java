@@ -27,7 +27,8 @@ import org.jredis.protocol.Command;
 import org.jredis.protocol.Response;
 import org.jredis.ri.alphazero.connection.DefaultConnectionSpec;
 import org.jredis.ri.alphazero.support.Assert;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class utilizes a (configurable) number of {@link Connection}s in a pool
@@ -46,6 +47,7 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class JRedisService extends SynchJRedisBase {
+    private static Logger logger = LoggerFactory.getLogger(JRedisService.class);
 
 	// ------------------------------------------------------------------------
 	// Consts
@@ -196,7 +198,7 @@ public class JRedisService extends SynchJRedisBase {
 			// user (calling) thread and is not connection specific, and the situation
 			// is ambiguous.  We can note it for now.
 			e.printStackTrace();
-			Log.log("Thread <%s> was interrupted in JRedisService.serviceRequest", Thread.currentThread().getName());
+			logger.info("Thread <%s> was interrupted in JRedisService.serviceRequest", Thread.currentThread().getName());
 		}
 		return response;
 	}

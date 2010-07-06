@@ -35,7 +35,8 @@ import org.jredis.ri.alphazero.protocol.ConcurrentSynchProtocol;
 import org.jredis.ri.alphazero.protocol.VirtualResponse;
 import org.jredis.ri.alphazero.support.Assert;
 import org.jredis.ri.alphazero.support.FastBufferedInputStream;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * [TODO: document me!]
@@ -47,6 +48,8 @@ import org.jredis.ri.alphazero.support.Log;
  */
 
 public class AsynchConnection extends ConnectionBase implements Connection {
+    private static Logger logger = LoggerFactory.getLogger(AsynchConnection.class);
+
 	// ------------------------------------------------------------------------
 	// Properties
 	// ------------------------------------------------------------------------
@@ -156,7 +159,7 @@ public class AsynchConnection extends ConnectionBase implements Connection {
     	 */
 
         public void run () {
-			Log.log("AsynchConnection processor thread <%s> started.", Thread.currentThread().getName());
+			logger.info("AsynchConnection processor thread <%s> started.", Thread.currentThread().getName());
         	PendingRequest pending = null;
         	while(true){
 				try {
@@ -171,21 +174,21 @@ public class AsynchConnection extends ConnectionBase implements Connection {
 						
 						pending.completion.signal();
 						if(pending.response.getStatus().isError()) {
-							Log.error ("(Asynch) Error response for " + pending.cmd.code + " => " + pending.response.getStatus().message());
+							logger.error ("(Asynch) Error response for " + pending.cmd.code + " => " + pending.response.getStatus().message());
 						}
 					}
 					catch (ProviderException bug){
 						bug.printStackTrace();
-						Log.error ("ProviderException: " + bug.getLocalizedMessage());
+						logger.error ("ProviderException: " + bug.getLocalizedMessage());
 						pending.setCRE(bug);
 					}
 					catch (ClientRuntimeException cre) {
 						cre.printStackTrace();
-						Log.error ("ClientRuntimeException: " + cre.getLocalizedMessage());
+						logger.error ("ClientRuntimeException: " + cre.getLocalizedMessage());
 						pending.setCRE(cre);
 					}
 					catch (RuntimeException e){
-						Log.error ("Unexpected (and not handled) RuntimeException: " + e.getLocalizedMessage());
+						logger.error ("Unexpected (and not handled) RuntimeException: " + e.getLocalizedMessage());
 						e.printStackTrace();
 						pending.setCRE(new ProviderException("Unexpected runtime exception in response handler"));
 						pending.setResponse(null);
@@ -204,7 +207,7 @@ public class AsynchConnection extends ConnectionBase implements Connection {
 	                e1.printStackTrace();
                 }
         	}
-			Log.log("AsynchConnection processor thread <%s> stopped.", Thread.currentThread().getName());
+			logger.info("AsynchConnection processor thread <%s> stopped.", Thread.currentThread().getName());
         }
     }
 }

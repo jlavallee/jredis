@@ -33,7 +33,8 @@
 package org.jredis.ri.alphazero.support;
 
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -44,9 +45,12 @@ import static org.testng.Assert.*;
 @Test(suiteName="support-tests")
 public class ConvertTest {
 	
+    private static Logger logger = LoggerFactory.getLogger(ConvertTest.class);
+
+	
 	@Test
 	public void testGetNaturalNumber() {
-		Log.log("Testing bytes to number conversion ...");
+		logger.info("Testing bytes to number conversion ...");
 		byte[] data = null;
 		
 		// test null
@@ -240,7 +244,7 @@ public class ConvertTest {
 	 */
 	@Test
 	public void testToBytes() {
-		Log.log("Testing number to bytes conversion ...");
+		logger.info("Testing number to bytes conversion ...");
 		byte[] javadata = null;
 		byte[] data = null;
 

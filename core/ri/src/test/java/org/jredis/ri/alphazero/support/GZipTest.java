@@ -18,6 +18,9 @@ package org.jredis.ri.alphazero.support;
 
 import java.nio.charset.Charset;
 import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.*;
 import org.testng.Assert;
 import static org.jredis.ri.alphazero.support.GZip.*;
@@ -32,11 +35,13 @@ import static org.jredis.ri.alphazero.support.GZip.*;
 
 @Test(suiteName="support-tests")
 public class GZipTest {
+    private static Logger logger = LoggerFactory.getLogger(GZipTest.class);
+
 	public final static Charset SUPPORTED_CHARSET = Charset.forName ("UTF-8");
 
 	@Test
 	public void testCompression() {
-		Log.log("Testing compress/decompress of 1000 random 24KB strings ...");
+		logger.info("Testing compress/decompress of 1000 random 24KB strings ...");
     	int cnt = 1000;
     	int size = 1024 * 24;
     	for(int i=0; i<cnt; i++){

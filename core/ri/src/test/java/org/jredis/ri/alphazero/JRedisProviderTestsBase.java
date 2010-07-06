@@ -36,7 +36,8 @@ import org.jredis.ZSetEntry;
 import org.jredis.protocol.Command;
 import org.jredis.ri.JRedisTestSuiteBase;
 import org.jredis.ri.alphazero.support.DefaultCodec;
-import org.jredis.ri.alphazero.support.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +48,8 @@ import org.testng.annotations.Test;
 //TODO: get rid of NG in class name
 
 public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedis>{
+    private static Logger logger = LoggerFactory.getLogger(JRedisProviderTestsBase.class);
+
 
 	// ------------------------------------------------------------------------
 	// Properties
@@ -75,7 +78,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	 */
 	@Test
 	public void testElicitErrors() {
-		Log.log("TEST: Elicit errors");
+		logger.info("TEST: Elicit errors");
 		try {
 			provider.flushdb();
 			
@@ -86,7 +89,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// -- commands returning status response 
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				provider.sadd(key, dataList.get(0)); 
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -95,7 +98,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// -- commands returning value response 
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				provider.scard(key); 
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -104,7 +107,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// -- commands returning bulk response
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				provider.lpop(key); 
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -114,7 +117,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// -- commands returning multi-bulk response 
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				provider.smembers(key); 
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -131,7 +134,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	@Test
 //	public void testAuth() {
 //		test = Command.AUTH.code;
-//		Log.log("TEST: %s command", test);
+//		logger.info("TEST: %s command", test);
 //		try {
 //			jredis.auth(password);
 //		} 
@@ -146,7 +149,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testPing() {
 		cmd = Command.PING.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.ping();
 		} 
@@ -161,7 +164,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testExists_Expire_TTL() {
 		cmd = Command.EXISTS.code + " | " + Command.EXPIRE.code + " | " + Command.TTL.code;
-		Log.log("TEST: %s command(s)", cmd);
+		logger.info("TEST: %s command(s)", cmd);
 		try {
 			provider.flushdb();
 			assertTrue(provider.dbsize() == 0);
@@ -173,7 +176,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			provider.set(keyToExpire, System.currentTimeMillis());
 			assertTrue (provider.exists(keyToExpire));
 			
-			Log.log("TEST: %s with expire time of %d", Command.EXPIRE, expire_secs);
+			logger.info("TEST: %s with expire time of %d", Command.EXPIRE, expire_secs);
 			provider.expire(keyToExpire, expire_secs);
 			assertTrue (provider.exists(keyToExpire));
 			
@@ -204,7 +207,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testExpireat() {
 		cmd = Command.EXPIREAT.code;
-		Log.log("TEST: %s command(s)", cmd);
+		logger.info("TEST: %s command(s)", cmd);
 		try {
 			provider.flushdb();
 			assertTrue(provider.dbsize() == 0);
@@ -214,7 +217,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			assertTrue (provider.exists(keyToExpire));
 			
 			long expireTime = System.currentTimeMillis() + 500;
-			Log.log("TEST: %s with expire time 1000 msecs in future", Command.EXPIREAT);
+			logger.info("TEST: %s with expire time 1000 msecs in future", Command.EXPIREAT);
 			assertTrue(provider.expireat(keyToExpire, expireTime), "expireat for existing key should be true");
 			assertTrue(!provider.expireat("no-such-key", expireTime), "expireat for non-existant key should be false");
 			assertTrue (provider.exists(keyToExpire));
@@ -258,7 +261,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			Command.FLUSHDB.code + " | " +
 			Command.KEYS.code;
 			
-		Log.log("TEST: %s commands", cmd);
+		logger.info("TEST: %s commands", cmd);
 		try {
 			key = "woof";
 			provider.flushdb();
@@ -276,7 +279,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRename() {
 		cmd = Command.RENAME.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -299,7 +302,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRenamenx() {
 		cmd = Command.RENAMENX.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -334,7 +337,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSaveAndLastSave() {
 		cmd = Command.SAVE.code + " | " + Command.LASTSAVE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -347,7 +350,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 		} 
 		catch (RedisException e) { 
 			if(e.getLocalizedMessage().indexOf("background save in progress") != -1){
-				Log.problem ("** NOTE ** Redis background save in progress prevented effective test of SAVE and LASTSAVE.");
+				logger.warn ("** NOTE ** Redis background save in progress prevented effective test of SAVE and LASTSAVE.");
 			}
 			else 
 				fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); 
@@ -362,7 +365,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testBgsave() {
 		cmd = Command.BGSAVE.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -378,7 +381,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testBgrewriteaofe() {
 		cmd = Command.BGREWRITEAOF.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -395,7 +398,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSetStringByteArray() {
 		cmd = Command.SET.code + " | " + Command.SETNX.code + " byte[] | " + Command.GET;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -418,7 +421,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSetStringString() {
 		cmd = Command.SET.code + " | " + Command.SETNX.code + " String | " + Command.GET;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -441,7 +444,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSetStringNumber() {
 		cmd = Command.SET.code + " | " + Command.SETNX.code + " Long | " + Command.GET;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -461,7 +464,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSetStringT() {
 		cmd = Command.SET.code + " | " + Command.SETNX.code + " Java Object | " + Command.GET;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -476,14 +479,13 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	}
 
 	
-	
 	/**
 	 * Test method for {@link org.jredis.ri.alphazero.JRedisSupport#set(java.lang.String, byte[])}.
 	 */
 	@Test
 	public void testGetSetStringByteArray() {
 		cmd = Command.SET.code + " | " + Command.GETSET.code + " byte[] ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -504,7 +506,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testEcho() {
 		cmd = Command.ECHO.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -529,7 +531,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	@Test
 //	public void testGetSetStringString() {
 //		test = Command.SET.code + " | " + Command.GETSET.code + " String ";
-//		Log.log("TEST: %s command", test);
+//		logger.info("TEST: %s command", test);
 //		try {
 //			jredis.flushdb();
 //			
@@ -549,7 +551,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	@Test
 //	public void testGetSetStringNumber() {
 //		test = Command.SET.code + " | " + Command.GETSET.code + " Number ";
-//		Log.log("TEST: %s command", test);
+//		logger.info("TEST: %s command", test);
 //		try {
 //			jredis.flushdb();
 //			
@@ -569,7 +571,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	@Test
 //	public void testGetSetStringT() {
 //		test = Command.SET.code + " | " + Command.GETSET.code + " Java Object ";
-//		Log.log("TEST: %s command", test);
+//		logger.info("TEST: %s command", test);
 //		try {
 //			jredis.flushdb();
 //			
@@ -592,7 +594,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testIncrAndDecr() {
 		cmd = Command.INCR.code + " | " + Command.DECR.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -618,7 +620,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testIncrbyAndDecrby() {
 		cmd = Command.INCRBY.code + " |" + Command.DECRBY.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -646,7 +648,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testDel() {
 		cmd = Command.DEL.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -723,7 +725,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testMget() {
 		cmd = Command.MGET.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -795,7 +797,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testListPushWithSparseList() {
 		cmd = Command.RPUSH.code + " byte[] | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -831,7 +833,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRpushStringByteArray() {
 		cmd = Command.RPUSH.code + " byte[] | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -865,7 +867,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpushStringByteArray() {
 		cmd = Command.LPUSH.code + " byte[] | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -898,7 +900,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpoppushStringString() {
 		cmd = Command.RPOPLPUSH.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -927,7 +929,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRpushStringString() {
 		cmd = Command.RPUSH.code + " String | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -957,7 +959,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpushStringString() {
 		cmd = Command.LPUSH.code + " String | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -990,7 +992,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRpushStringNumber() {
 		cmd = Command.RPUSH.code + " Number | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1021,7 +1023,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpushStringNumber() {
 		cmd = Command.LPUSH.code + " Number | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1055,7 +1057,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRpushStringT() {
 		cmd = Command.RPUSH.code + " Java Object | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1086,7 +1088,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpushStringT() {
 		cmd = Command.LPUSH.code + " Java Object | " + Command.LLEN + " | " + Command.LRANGE;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1121,7 +1123,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLtrim() {
 		cmd = Command.LTRIM.code + " | " + Command.LLEN.code + " | " + Command.LRANGE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1164,7 +1166,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLindex() {
 		cmd = Command.LINDEX.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1185,7 +1187,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLpop() {
 		cmd = Command.LPOP.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1212,7 +1214,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRpop() {
 		cmd = Command.RPOP.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1239,7 +1241,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLrange() {
 		cmd = Command.LRANGE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1269,7 +1271,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLremStringByteArrayInt() {
 		cmd = Command.LREM.code + " byte[] | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1313,7 +1315,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLremStringStringInt() {
 		cmd = Command.LREM.code + " String | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1346,7 +1348,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLremStringNumberInt() {
 		cmd = Command.LREM.code + " Number | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1379,7 +1381,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLremStringTInt() {
 		cmd = Command.LREM.code + " Java Object | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1412,7 +1414,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLsetStringIntByteArray() {
 		cmd = Command.LSET.code + " byte[] | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1447,7 +1449,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// out of range
 			boolean expectedError = false;
 			try {
-				Log.log("Expecting an out of range ERROR for LSET here ..");
+				logger.info("Expecting an out of range ERROR for LSET here ..");
 				provider.lset(listkey, SMALL_CNT, dataList.get(0)); 
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -1462,7 +1464,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLsetStringIntString() {
 		cmd = Command.LSET.code + " String | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1505,7 +1507,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLsetStringIntNumber() {
 		cmd = Command.LSET.code + " Number | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1548,7 +1550,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testLsetStringIntT() {
 		cmd = Command.LSET.code + " Java Object | " + Command.LLEN;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
@@ -1598,7 +1600,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSort() {
 		cmd = Command.SORT.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		
 		final String setkey = "set-key";
 		final String listkey = "list-key";
@@ -1612,25 +1614,25 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 
 			List<String> sorted = null;
 			
-			Log.log("TEST: SORTED LIST [t.1]");
+			logger.info("TEST: SORTED LIST [t.1]");
 			sorted = toStr(provider.sort(listkey).ALPHA().LIMIT(0, MEDIUM_CNT).DESC().exec());
 			assertEquals(sorted.size(), MEDIUM_CNT, "expecting sort results of size MEDIUM_CNT");
 			for(String s : sorted)
 				System.out.format("[t.1]: %s\n", s);
 			
-			Log.log("TEST: SORTED LIST [t.2]");
+			logger.info("TEST: SORTED LIST [t.2]");
 			sorted = toStr(provider.sort(listkey).ALPHA().LIMIT(10, 9).DESC().exec());
 			assertEquals(sorted.size(), 9, "expecting sort results of size 9");
 			for(String s : sorted)
 				System.out.format("[t.2]: %s\n", s);
 			
-			Log.log("TEST: SORTED LIST [t.3]");
+			logger.info("TEST: SORTED LIST [t.3]");
 			sorted = toStr(provider.sort(listkey).ALPHA().LIMIT(MEDIUM_CNT-1, 1).DESC().exec());
 			assertEquals(sorted.size(), 1, "expecting sort results of size 1");
 			for(String s : sorted)
 				System.out.format("[t.3]: %s\n", s);
 			
-			Log.log("TEST: SORTED SET ");
+			logger.info("TEST: SORTED SET ");
 //			sorted = toStr(jredis.sort(setkey).ALPHA().LIMIT(0, 100).BY("*BB*").exec());
 			sorted = toStr(provider.sort(setkey).ALPHA().LIMIT(0, 555).DESC().exec());
 			for(String s : sorted)
@@ -1665,7 +1667,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZaddStringByteArray() {
 		cmd = Command.ZADD.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1683,7 +1685,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZremStringByteArray() {
 		cmd = Command.ZADD.code + " byte[] | " + Command.ZREM.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1700,7 +1702,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZscoreStringByteArray() {
 		cmd = Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1720,7 +1722,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZincrbyStringByteArray() {
 		cmd = Command.ZSCORE.code + " byte[] | " + Command.ZINCRBY.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1742,7 +1744,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZrangeStringByteArray() {
 		cmd = Command.ZRANGE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1765,7 +1767,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZrangeWithscoresStringByteArray() {
 		cmd = Command.ZRANGE$OPTS.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1790,7 +1792,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZrangebyscoreWithscoresStringByteArray() {
 		cmd = Command.ZRANGEBYSCORE$OPTS.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1819,7 +1821,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZrevrangeWithscoresStringByteArray() {
 		cmd = Command.ZREVRANGE$OPTS.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1844,7 +1846,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZrangebyscoreStringByteArray() {
 		cmd = Command.ZRANGEBYSCORE.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1864,7 +1866,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZremrangebyscoreStringByteArray() {
 		cmd = Command.ZREMRANGEBYSCORE.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1885,7 +1887,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSaddStringByteArray() {
 		cmd = Command.SADD.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1905,7 +1907,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSaddStringString() {
 		cmd = Command.SADD.code + " String";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1925,7 +1927,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSaddStringNumber() {
 		cmd = Command.SADD.code + " Number";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1945,7 +1947,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSaddStringT() {
 		cmd = Command.SADD.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -1962,7 +1964,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSrandmember() {
 		cmd = Command.SRANDMEMBER.code + " String ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2010,7 +2012,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSpop() {
 		cmd = Command.SPOP.code + " String ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2053,7 +2055,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSmembers() {
 		cmd = Command.SMEMBERS.code + " byte[] ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2080,7 +2082,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
 
 		cmd = Command.SMEMBERS.code + " String ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2107,7 +2109,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
 
 		cmd = Command.SMEMBERS.code + " Number ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2134,7 +2136,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
 
 		cmd = Command.SMEMBERS.code + " Java Object ";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2167,7 +2169,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSmoveStringByteArray() {
 		cmd = Command.SMOVE.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2198,7 +2200,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// wrong dest
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				assertTrue(provider.smove (destkey, stringKey, dataList.get(0)), "dest is wrong type");
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -2207,7 +2209,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// wrong src
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				assertTrue(provider.smove (stringKey, srckey, dataList.get(0)), "src is wrong type");
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -2216,7 +2218,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			// wrong src and dest
 			expectedError = false;
 			try {
-				Log.log("Expecting an operation against key holding the wrong kind of value ERROR..");
+				logger.info("Expecting an operation against key holding the wrong kind of value ERROR..");
 				assertTrue(provider.smove (listKey, stringKey, dataList.get(0)), "src and dest are wrong type");
 			}
 			catch (RedisException e) { expectedError = true; }
@@ -2231,7 +2233,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSismemberStringByteArray() {
 		cmd = Command.SISMEMBER.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2251,7 +2253,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSismemberStringString() {
 		cmd = Command.SISMEMBER.code + " String";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2271,7 +2273,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSismemberStringNumber() {
 		cmd = Command.SISMEMBER.code + " Number";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2291,7 +2293,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSismemberStringT() {
 		cmd = Command.SISMEMBER.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2312,7 +2314,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testScard() {
 		cmd = Command.SCARD.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2331,7 +2333,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZcard() {
 		cmd = Command.ZADD.code + " Java Object | " + Command.ZCARD.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2347,7 +2349,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testZcountStringByteArray() {
 		cmd = Command.ZCOUNT.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2368,7 +2370,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSinter() {
 		cmd = Command.SINTER.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2392,7 +2394,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSinterstore() {
 		cmd = Command.SINTERSTORE.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2420,7 +2422,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSunion() {
 		cmd = Command.SUNION.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2444,7 +2446,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSunionstore() {
 		cmd = Command.SUNIONSTORE.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2472,7 +2474,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSdiff() {
 		cmd = Command.SDIFF.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2511,7 +2513,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSdiffstore() {
 		cmd = Command.SDIFFSTORE.code;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2547,7 +2549,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSremStringByteArray() {
 		cmd = Command.SISMEMBER.code + " byte[]";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2568,7 +2570,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSremStringString() {
 		cmd = Command.SISMEMBER.code + " String";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2589,7 +2591,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSremStringNumber() {
 		cmd = Command.SISMEMBER.code + " Number";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2610,7 +2612,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testSremStringT() {
 		cmd = Command.SISMEMBER.code + " Java Object";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2633,7 +2635,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testDbsize() {
 		cmd = Command.DBSIZE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2654,7 +2656,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testRandomkey() {
 		cmd = Command.RANDOMKEY.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2679,7 +2681,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	@Test
 //	public void testMove() {
 //		test = Command.MOVE.code ;
-//		Log.log("TEST: %s command", test);
+//		logger.info("TEST: %s command", test);
 //		try {
 //			jredis.flushdb();
 //			assertTrue (jredis.dbsize() == 0, "db1 should be empty");
@@ -2705,7 +2707,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testType() {
 		cmd = Command.TYPE.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2726,14 +2728,14 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testInfo() {
 		cmd = Command.INFO.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 
 			Map<String, String> infoMap =  provider.info();
 			for (RedisInfo info : RedisInfo.values()){
 				assertNotNull(infoMap.get(info.name()));
-				Log.log("%s => %s", info.name(), infoMap.get(info.name()));
+				logger.info("%s => %s", info.name(), infoMap.get(info.name()));
 			}
 		} 
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
@@ -2745,14 +2747,14 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testDebug() {
 		cmd = Command.DEBUG.code ;
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
 			provider.set("foo", "bar");
 			ObjectInfo info = provider.debug("foo");
 			assertNotNull(info);
-			Log.log("DEBUG of key => %s", info);
+			logger.info("DEBUG of key => %s", info);
 		} 
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
 	}
@@ -2763,7 +2765,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testKeys() {
 		cmd = Command.KEYS.code + " (*)";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2784,7 +2786,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	@Test
 	public void testKeysString() {
 		cmd = Command.KEYS.code + " (using patterns)";
-		Log.log("TEST: %s command", cmd);
+		logger.info("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
 			
@@ -2831,10 +2833,10 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //			setJRedisProviderInstance(jredis);
 //			prepTestDBs();
 //			
-//			Log.log("JRedisClientNGTest.setJRedisProvider - done");
+//			logger.info("JRedisClientNGTest.setJRedisProvider - done");
 //        }
 //        catch (ClientRuntimeException e) {
-//        	Log.error(e.getLocalizedMessage());
+//        	logger.error(e.getLocalizedMessage());
 //        }
 //	}
 //	
@@ -2851,7 +2853,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 //	 */
 //	protected final void setJRedisProviderInstance (JRedis jredisProvider) {
 //		this.jredis = jredisProvider;
-//		Log.log( "TEST: " +
+//		logger.info( "TEST: " +
 //				"\n\t-----------------------------------------------\n" +
 //				"\tProvider Class: %s" +
 //				"\n\t-----------------------------------------------\n", 
